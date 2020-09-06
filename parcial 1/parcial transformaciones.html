@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Transformaciones</title>
+        <style>
+            html, body { margin: 0; padding: 0; overflow: hidden; }
+            #info {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                color: #FFFFFF;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="info">TRANSFORMACIONES<br/>
+        </div>
+    <script src="js/three.min.js"></script>
+    <script>
+		var scene, aspect, camera, renderer;
+		var geometry;
+		var plano;
+		var startTime = Date.now();
+				
+		var upArrow = false;
+		var downArrow = false;
+		var leftArrow = false;
+		var rightArrow = false;
+		var scaleUp = false;
+		var scaleDown = false;
+		var xAxis = true;
+		var yAxis = false;
+		var zAxis = false;
+		
+		init();
+		animate();
+	
+		function init(){
+			scene = new THREE.Scene();
+			aspect = window.innerWidth / window.innerHeight;
+			camera = new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000);
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			
+			//ELEMENTOS DE ESCENA
+							  
+			var size = 100;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+			var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x333333 );
+		  	var colorR = new THREE.Color( 0xAA0000 );
+		  	var colorG = new THREE.Color( 0x00AA00 );
+		  	var colorB = new THREE.Color( 0x0000AA );
+			var colorRd = new THREE.Color( 0xAA6666 );
+		  	var colorGd = new THREE.Color( 0x66AA66 );
+		  	var colorBd = new THREE.Color( 0x6666AA );
+		  
+		  	//CREAR LAS GRILLAS PARA EL ESCENARIO
+		  	var axesHelper = new THREE.AxesHelper( size );
+		  	var gridHelperXY = new THREE.GridHelper( size, divisions, color1, color1);
+		  	var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2 );
+		  	var gridHelperYZ = new THREE.GridHelper( size, divisions, color2, color2 );
+            
+            //ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+            gridHelperXY.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+            gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+            gridHelperYZ.rotateOnWorldAxis ( z, THREE.Math.degToRad(90) );
+            
+            //CREAR LAS FLECHAS QUE INDICAN LOS EJES DE COORDENADAS 3D
+            var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );
+            var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+            var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
+			
+			//CREAR LAS GEOMETRÍAS
+			geometry = new THREE.BoxGeometry( 30, 30, 0.001 );
+			for ( var i = 0; i < geometry.faces.length; i ++ ) {
+				switch(i){
+					case 0: case 1: geometry.faces[ i ].color = colorRd; break;
+					case 2: case 3: geometry.faces[ i ].color = colorRd; break;
+					case 4: case 5: geometry.faces[ i ].color = colorGd; break;
+					case 6: case 7: geometry.faces[ i ].color = colorGd; break;
+					case 8: case 9: geometry.faces[ i ].color = colorBd; break;
+					case 10: case 11: geometry.faces[ i ].color = colorBd; break;
+				}
+			}
+			geometryfi = new THREE.BoxGeometry( 30, 30, 0.001 );
+			for ( var i = 0; i < geometry.faces.length; i ++ ) {
+				switch(i){
+					case 0: case 1: geometry.faces[ i ].color = colorRd; break;
+					case 2: case 3: geometry.faces[ i ].color = colorRd; break;
+					case 4: case 5: geometry.faces[ i ].color = colorGd; break;
+					case 6: case 7: geometry.faces[ i ].color = colorGd; break;
+					case 8: case 9: geometry.faces[ i ].color = colorBd; break;
+					case 10: case 11: geometry.faces[ i ].color = colorBd; break;
+				}				
+			}
+			//CREAR LOS MATERIALES
+			var material = new THREE.MeshBasicMaterial( { color: color1, vertexColors: THREE.FaceColors } );
+			
+			//CREAR LOS OBJETOS
+			plano = new THREE.Mesh( geometry, material );
+            planofi = new THREE.Mesh( geometryfi, material );
+									
+		  	//AGREGAR A LA ESCENA
+            scene.add( gridHelperXZ );
+		  	scene.add( arrowX );	
+		  	scene.add( arrowY );	
+		  	scene.add( arrowZ );	
+			scene.add( plano );
+			scene.add( planofi );
+            
+			//MOVER LA CAMARA
+			camera.position.x = -40;
+			camera.position.y = 100;	 
+		  	camera.position.z = 100;			
+		  	camera.lookAt( origin );
+            
+            var q = new THREE.Matrix4();
+		q.set(   1, 0, 0, 25,
+                 0, 1, 0, 25,
+				 0, 0, 1, 0,
+				 0, 0, 0, 1	);
+        
+        plano.applyMatrix(q);
+        planofi.applyMatrix(q);
+            
+		var  tz=8;	            //traslacion
+		var sc = 5;				//escala
+		var theta=30;			//rotación
+        var ct = Math.cos(theta);
+		var st = Math.sin(theta);
+		
+		//MATRIZ DE TRASLACIÓN
+		var tre = new THREE.Matrix4();
+		tre.set( 	sc*ct, 0, st, 0,
+				0, 1, 0, 0, 
+				-st, 0, ct, tz,
+				0, 0, 0, 1	);
+
+		planofi.applyMatrix(tre);
+		
+			}
+    
+    function animate() {
+        render();
+        requestAnimationFrame( animate );
+    }
+    
+    function render(){
+        
+				
+		plano.elementsNeedUpdate = true;
+        camera.lookAt( 0, 0, 0 );
+        renderer.render( scene, camera );
+    }
+       
+    </script>
+  </body>
+</html>
