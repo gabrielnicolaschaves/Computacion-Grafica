@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>carro complete</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
+	<script src="js/csg.js"></script>
+	<script src="js/THREE.CSG.js"></script>
+    <script>
+		var scene, aspect, camera, renderer, controls;
+        var camar;
+        var cam = new THREE.Vector3( 0, 5, 6 );
+        
+		init();
+		animate();
+		function init(){
+			//INICIALIZACIÓN
+	        scene = new THREE.Scene();
+	        aspect = window.innerWidth / window.innerHeight;
+	        camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000);
+	        renderer = new THREE.WebGLRenderer();
+	        renderer.setSize( window.innerWidth, window.innerHeight );
+	        document.body.appendChild( renderer.domElement );
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			//ELEMENTOS COMUNES
+			var size = 10;
+			var arrowSize = 1;
+			var divisions = size;
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+		  	var color = new THREE.Color( 0x333333 );
+		  	var colorLlan = new THREE.Color( 0x323335 );
+		  	var colorRin = new THREE.Color( 0xA9A9A9 );
+		  	var colorCa = new THREE.Color( 0x0D8920 );
+			
+		  	//CREAR LAS GRILLAS PARA EL ESCENARIO
+		  	var axesHelper = new THREE.AxesHelper( size );
+			scene.add( axesHelper );
+			
+		  	var gridHelperXZ = new THREE.GridHelper( size, divisions, color, color );
+			scene.add( gridHelperXZ );
+            
+            //ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+            gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+
+            //CREAR ILUMINACIÓN
+            var ambient = new THREE.AmbientLight( 0xffffff, 2 );
+            scene.add( ambient );
+			
+            var pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
+            pointLight.position.set( -5, -2, 5 );
+            scene.add( pointLight );
+			
+            var pointLight = new THREE.PointLight( 0xffffff, .5, 100 );
+            pointLight.position.set( 5, -2, -5 );
+            scene.add( pointLight );
+			
+			//CREAR LAS GEOMETRÍAS
+            
+            var llan = new THREE.CylinderGeometry(1.5,1.5,0.7,25); 
+            var llan2 = new THREE.CylinderGeometry(1,1,0.7,25);
+            var ringe = new THREE.CylinderGeometry(1,1,0.5,25);
+            var ringo = new THREE.CylinderGeometry(0.9,0.9,0.5,25);
+			var pata = new THREE.BoxGeometry( 0.5, 0.8, 0.2 );
+            var visor = new THREE.BoxGeometry( 18, 5, 11 );
+            var rinchi = new THREE.CylinderGeometry(0.4,0.4,0.3,25);
+            var rinhu = new THREE.CylinderGeometry(0.1,0.1,0.4,25);
+            var hueco = new THREE.CylinderGeometry(2.9,2.9,1.1,25);
+            var cama = new THREE.BoxGeometry( 1, 1, 1 );
+            
+			//CREAR LOS MATERIALES
+            
+            var material1 = new THREE.MeshStandardMaterial( { color: colorLlan } );
+			var material2 = new THREE.MeshStandardMaterial( { color: colorRin, metalness: 0.5, roughness: 0.1 } );
+            var material3 = new THREE.LineBasicMaterial( { color : colorCa } );
+			var material4= new THREE.MeshStandardMaterial( { color: colorCa, metalness: 0.5,  roughness: 0.1 ,opacity: 0.75, transparent: true	 } );
+			//CREAR LAS MALLAS
+            
+            var car = [];
+                car[0] = new THREE.Vector2( -0.2, 0.7 );
+                car[1] = new THREE.Vector2( -1, 1.6 );
+                car[2] = new THREE.Vector2( -0.9, 4 );
+                car[3] = new THREE.Vector2( -0.1, 4.3 );
+                car[4] = new THREE.Vector2( -0.1, 6 );
+                car[5] = new THREE.Vector2( 0.1, 6.3 );
+                car[6] = new THREE.Vector2( 0.1, 6.3 );
+                car[7] = new THREE.Vector2( 0.2, 7.3 ); 
+                car[8] = new THREE.Vector2( 0.5, 7.5 );
+                car[9] = new THREE.Vector2( 0.7, 7.5 );
+                car[10] = new THREE.Vector2( 0.7, 7.5 );
+                car[11] = new THREE.Vector2( 0.4, 8.4 );
+                car[12] = new THREE.Vector2( 0.5, 8.5 );
+                car[13] = new THREE.Vector2( 1.5, 8.5 );
+                car[14] = new THREE.Vector2( 1.6, 8.4 );
+                car[15] = new THREE.Vector2( 1.8, 7.5 );
+                car[16] = new THREE.Vector2( 1.9, 7.4 );
+                car[17] = new THREE.Vector2( 2.3, 7.5 );
+                car[18] = new THREE.Vector2( 2.3, 7.5 );
+                car[19] = new THREE.Vector2( 4.4,8.8);
+                car[20] = new THREE.Vector2( 7, 9.5 );
+                car[21] = new THREE.Vector2( 12, 9.8 );
+                car[22] = new THREE.Vector2( 16, 9.5 );
+                car[23] = new THREE.Vector2( 22, 7.5 );
+                car[24] = new THREE.Vector2( 23, 7.3 );
+                car[25] = new THREE.Vector2( 26, 7.6 );
+                car[25] = new THREE.Vector2( 28, 6 );
+                car[26] = new THREE.Vector2( 30, 5 );
+                car[27] = new THREE.Vector2( 31, 3 );
+                car[28] = new THREE.Vector2( 30, 1 );
+                car[29] = new THREE.Vector2( 30, 0 );
+            
+            var windo = [];
+                windo[0] = new THREE.Vector2( -4, 1.6 );
+                windo[1] = new THREE.Vector2( -9, 1.7 );
+                windo[2] = new THREE.Vector2( -10, 0.1 );
+                windo[3] = new THREE.Vector2( -10, 0 );
+            
+            var windo1 = [];
+                windo1[0] = new THREE.Vector2( 0.2, 1.6 );
+                windo1[1] = new THREE.Vector2( -3, 1.5 );
+                windo1[2] = new THREE.Vector2( -4.5, 1 );
+                windo1[3] = new THREE.Vector2( -5, 0.4 );
+                windo1[4] = new THREE.Vector2( -5, 0 );
+            
+			var cubo = new THREE.Mesh( pata );
+            var cubo1 = new THREE.Mesh( pata );
+            var cubo2 = new THREE.Mesh( pata );
+            var visor = new THREE.Mesh( visor );
+            var llanta = new THREE.Mesh( llan );
+            var llanta2 = new THREE.Mesh( llan2 );
+            var rine = new THREE.Mesh( ringe );
+            var rino = new THREE.Mesh( ringo );
+            var rinfi = new THREE.Mesh( rinchi );
+            var rinfo = new THREE.Mesh( rinhu );
+            var rinfa = new THREE.Mesh( rinhu );
+            var rinfu = new THREE.Mesh( rinhu );
+            var hueco1 = new THREE.Mesh( hueco );
+            var hueco2 = new THREE.Mesh( hueco );
+            var hueco3 = new THREE.Mesh( hueco );
+            var hueco4 = new THREE.Mesh( hueco );
+            camar = new THREE.Mesh( cama );
+            
+            camar.translateX(1);
+            camar.translateY(1);
+            camar.translateZ(1);
+            
+            hueco1.rotateX(1.6);
+            hueco1.translateX(10);
+            hueco1.translateZ(-1);
+            hueco2.rotateX(1.6);
+            hueco2.translateX(-10);
+            hueco2.translateZ(-1);
+            hueco3.rotateX(1.6);
+            hueco3.translateX(10);
+            hueco3.translateZ(-1);
+            hueco3.translateY(12);
+            hueco4.rotateX(1.6);
+            hueco4.translateX(-10);
+            hueco4.translateZ(-1);
+            hueco4.translateY(12);
+            
+            llanta.rotateX(1.6);
+            llanta2.rotateX(1.6);
+            
+            rine.rotateX(1.6);
+            rino.rotateX(1.6);
+            cubo.translateY(0.5);
+            cubo1.translateX(0.5);
+            cubo1.translateY(-0.3);
+            cubo1.rotateZ(1);
+            cubo2.translateX(-0.5);
+            cubo2.translateY(-0.3);
+            cubo2.rotateZ(-1);
+            rinfi.rotateX(1.6);
+            rinfo.rotateX(1.6);
+            rinfo.translateZ(-0.6);
+            rinfo.scale.set(1,1,1.7);
+            rinfa.translateX(0.5);
+            rinfa.translateY(-0.3);
+            rinfa.rotateZ(1);
+            rinfa.scale.set(1,1,1.7);
+            rinfa.rotateX(1.6);
+            rinfu.translateX(-0.5);
+            rinfu.translateY(-0.3);
+            rinfu.rotateZ(-1);
+            rinfu.scale.set(1,1,1.7);
+            rinfu.rotateX(1.6);
+            
+            visor.translateY(6.7);
+            visor.translateZ(6);
+            visor.translateX(-3);
+            
+            var ven2 = new THREE.Shape();
+			ven2.moveTo(0,0);
+			ven2.splineThru(windo1);
+            
+            var resolution = 50;
+            var points2 = ven2.getPoints( resolution );
+            var geometry2 = new THREE.BufferGeometry().setFromPoints( points2 );
+            var curveObject2 = new THREE.Line( geometry2, material1 );
+            
+			var extrude2 = {
+				steps: 2,
+				amount: 14,
+				bevelEnabled: false,
+			};
+
+			var geometryventana2 = new THREE.ExtrudeGeometry( ven2, extrude2 );
+            
+            var wi2 = new THREE.Mesh( geometryventana2, material1 ) ;
+            wi2.translateY(7.5);
+            wi2.translateX(-5.7);
+            wi2.translateZ(-1);
+            
+            var ven1 = new THREE.Shape();
+			ven1.moveTo(0,0);
+			ven1.splineThru(windo);
+            
+            var resolution = 50;
+            var points1 = ven1.getPoints( resolution );
+            var geometry1 = new THREE.BufferGeometry().setFromPoints( points1 );
+            var curveObject1 = new THREE.Line( geometry1, material1 );
+            
+			var extrude1 = {
+				steps: 2,
+				amount: 14,
+				bevelEnabled: false,
+			};
+
+			var geometryventana1 = new THREE.ExtrudeGeometry( ven1, extrude1 );
+            
+            var wi1 = new THREE.Mesh( geometryventana1, material1 ) ;
+            wi1.translateY(7.5);
+            wi1.translateX(5);
+            wi1.translateZ(-1);
+            
+            var carrito = new THREE.Shape();
+			carrito.moveTo(0,0);
+			carrito.splineThru(car);
+            
+            var resolution = 50;
+            var points = carrito.getPoints( resolution );
+            var geometry = new THREE.BufferGeometry().setFromPoints( points );
+            var curveObject = new THREE.Line( geometry, material3 );
+            
+			var extrude = {
+				steps: 2,
+				amount: 12,
+				bevelEnabled: false,
+			};
+            
+			var geometrycarro = new THREE.ExtrudeGeometry( carrito, extrude );
+            
+            var carr = new THREE.Mesh( geometrycarro, material4 ) ;
+            carr.translateX(-15);
+            
+			//CONVERTIR A CSG
+            var lla = THREE.CSG.fromMesh( llanta );
+            var lla2 = THREE.CSG.fromMesh( llanta2 );
+            var rin = THREE.CSG.fromMesh( rine );
+            var rin2 = THREE.CSG.fromMesh( rino );
+            var rin3 = THREE.CSG.fromMesh( rinfi );
+            var rin4 = THREE.CSG.fromMesh( rinfo );
+            var rin5 = THREE.CSG.fromMesh( rinfa );
+            var rin6 = THREE.CSG.fromMesh( rinfu );
+			var box = THREE.CSG.fromMesh( cubo );
+            var box1 = THREE.CSG.fromMesh( cubo1 );
+            var box2 = THREE.CSG.fromMesh( cubo2 );
+            var vis = THREE.CSG.fromMesh( visor );
+            var carcasa = THREE.CSG.fromMesh( carr );
+            var ventana1 = THREE.CSG.fromMesh( wi1 );
+            var ventana2 = THREE.CSG.fromMesh( wi2 );
+            var hueco11 = THREE.CSG.fromMesh( hueco1 );
+            var hueco22 = THREE.CSG.fromMesh( hueco2 );
+            var hueco33 = THREE.CSG.fromMesh( hueco3 );
+            var hueco44 = THREE.CSG.fromMesh( hueco4 );
+            
+			//APLICAR LAS OPERACIONES
+			var rueda = lla.subtract( lla2 );	
+            var rinsito = rin.subtract( rin2 );
+			var rinin = box.union( rinsito );
+            var rinen = box1.union( rinin );
+            var rinon = box2.union( rinen );
+            var rinfinal = rin3.union( rinon );
+            var rinq = rinfinal.subtract( rin4 );
+            var rinw = rin4.subtract( rin5 );
+            var rinr = rin5.subtract( rin6 );
+            
+            var carri1 = carcasa.subtract( hueco11 );
+            var carri2 = carri1.subtract( hueco22 );
+            var carri3 = carri2.subtract( hueco33 );
+            var carri4 = carri3.subtract( hueco44 );
+            var carri5 = carri4.subtract( ventana1 );
+            var carri6 = carri5.subtract( ventana2 );
+            var carri7 = carri6.subtract( vis );
+			
+			//CONVERTIR A MALLA DE THREE JS NUEVAMENTE
+			var a = THREE.CSG.toMesh( rueda );
+            var b = THREE.CSG.toMesh( rinsito );
+			var c = THREE.CSG.toMesh( rinfinal );
+            var d = THREE.CSG.toMesh( rinq );
+            var e = THREE.CSG.toMesh( rinw );
+            var f = THREE.CSG.toMesh( rinr );
+            var ca = THREE.CSG.toMesh( carri7 );
+			
+			a.material = material1;
+            b.material = material2;
+            c.material = material2; 
+			f.material = material2; 
+            ca.material = material4;
+			
+            hueco1.material = material1;
+            llanta.material = material1;
+			rine.material = material2;
+            cubo.material = material2;
+            cubo1.material = material2;
+            cubo2.material = material2;
+            rinfo.material = material2;
+            rinfa.material = material2;
+            rinfu.material = material2;
+            
+            a.add( b );
+            a.add( c );
+            var lla1 = new THREE.Mesh();
+            var lla2 = new THREE.Mesh();
+            var lla3 = new THREE.Mesh();
+            
+            lla1 = a.clone();
+            lla2 = a.clone();
+            lla3 = a.clone();
+            
+            lla1.translateX(-12.5);
+            lla2.translateZ(7.5);
+            lla3.translateX(-12.5);
+            lla3.translateZ(7.5);
+            
+            a.translateX(10);
+            a.translateY(1);
+            a.scale.set(1.6,1.6,1.6);
+            a.add( lla1 );
+            a.add( lla2 );
+            a.add( lla3 );
+			
+			//AGREGAR A LA ESCENA LOS DIFERENTES ELEMENTOS
+            
+            scene.add( ca );
+            scene.add( a );
+            //scene.add( visor );
+            
+            ca.add( a );
+            
+			camera.position.x = -20;
+			camera.position.y = 18;
+		  	camera.position.z = 5;
+            
+			camera.lookAt( cam );
+            
+            ca.add( camera );
+		}
+		function animate(){
+			requestAnimationFrame( animate );
+			controls.update();
+            camera.lookAt( cam );
+			render();
+		}
+		function render(){
+            
+            
+            
+            
+            
+			renderer.render( scene, camera );
+		}
+    </script>
+  </body>
+</html>
